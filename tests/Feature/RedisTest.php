@@ -104,4 +104,14 @@ class RedisTest extends TestCase
     //     $result = Redis::geosearch('sellers', new FromLonLat(106.821666, -6.175494), new ByRadius(5, 'km'));
     //     self::assertEquals(['Toko A', 'Toko B'], $result);
     // }
+
+    public function testHyperLogLog()
+    {
+        Redis::pfadd('visitors', 'eko', 'kurniawan', 'khannedy');
+        Redis::pfadd('visitors', 'eko', 'budi', 'joko');
+        Redis::pfadd('visitors', 'rully', 'budi', 'joko');
+
+        $result = Redis::pfcount('visitors');
+        self::assertEquals(6, $result);
+    }
 }
