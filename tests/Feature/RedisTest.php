@@ -151,4 +151,35 @@ class RedisTest extends TestCase
 
         self::assertTrue(true);
     }
+
+    // DOESN'T WORK ON PREDIS, BUT WORK IN PHPREDIS
+    public function testPublishStream()
+    {
+        for ($i = 0; $i < 10; $i++) {
+            Redis::xadd('members', '*', [
+                'name' => "Eko $i",
+                'address' => 'Indonesia',
+            ]);
+        }
+
+        self::assertTrue(true);
+    }
+
+    // DOESN'T WORK ON PREDIS, BUT WORK IN PHPREDIS
+    public function testCreateConsumerGroup()
+    {
+        Redis::xgroup('create', 'members', 'group1', '0');
+        Redis::xgroup('createconsumer', 'members', 'group1', 'consumer-1');
+        Redis::xgroup('createconsumer', 'members', 'group1', 'consumer-2');
+        self::assertTrue(true);
+    }
+
+    // DOESN'T WORK ON PREDIS, BUT WORK IN PHPREDIS
+    public function testConsumerStream()
+    {
+        $result = Redis::xreadgroup('group1', 'consumer-1', ['members' => '>'], 3, 3000);
+
+        echo json_encode($result, JSON_PRETTY_PRINT);
+        self::assertNotNull($result);
+    }
 }
