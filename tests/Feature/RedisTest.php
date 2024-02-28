@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Console\Commands\TestSubscriber;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Predis\Command\Argument\Geospatial\ByRadius;
 use Predis\Command\Argument\Geospatial\FromLonLat;
@@ -181,5 +182,23 @@ class RedisTest extends TestCase
 
         echo json_encode($result, JSON_PRETTY_PRINT);
         self::assertNotNull($result);
+    }
+
+    public function testCache()
+    {
+        Cache::put('name', 'Eko', 2);
+        Cache::put('country', 'Indonesia', 2);
+
+        $response = Cache::get('name');
+        self::assertEquals('Eko', $response);
+        $response = Cache::get('country');
+        self::assertEquals('Indonesia', $response);
+
+        sleep(5);
+
+        $response = Cache::get('name');
+        self::assertNull($response);
+        $response = Cache::get('country');
+        self::assertNull($response);
     }
 }
